@@ -9,6 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -31,6 +32,7 @@ class MainActivity : ComponentActivity() {
                     factory = GameViewModelFactory(userPreferencesRepository)
                 )
                 val gameState by viewModel.uiState.collectAsState()
+                val context = LocalContext.current
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -40,7 +42,7 @@ class MainActivity : ComponentActivity() {
                         composable("main") {
                             MainScreen(
                                 gameState = gameState,
-                                onPlaySoundClick = { viewModel.onPlaySoundClicked() },
+                                onPlaySoundClick = { viewModel.playSound(context) },
                                 onSettingsClick = { navController.navigate("settings") }
                             )
                         }
