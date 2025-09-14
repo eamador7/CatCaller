@@ -45,7 +45,11 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable("settings") {
-                            SettingsScreen()
+                            SettingsScreen(
+                                gameState = gameState,
+                                onSoundSelected = viewModel::selectSound,
+                                onBackClick = { navController.popBackStack() }
+                            )
                         }
                     }
                 }
