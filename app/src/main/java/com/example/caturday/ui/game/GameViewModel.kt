@@ -38,6 +38,10 @@ class GameViewModel(
             userPreferencesRepository.saveSelectedSound(sound)
         }
     }
+
+    fun onPlaySoundClicked() {
+        // TODO: Implement sound playing logic
+    }
 }
 
 class GameViewModelFactory(

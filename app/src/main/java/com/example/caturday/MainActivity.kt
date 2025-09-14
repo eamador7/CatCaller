@@ -6,41 +6,50 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.caturday.data.UserPreferencesRepository
+import com.example.caturday.ui.game.GameViewModel
+import com.example.caturday.ui.game.GameViewModelFactory
+import com.example.caturday.ui.main.MainScreen
+import com.example.caturday.ui.settings.SettingsScreen
 import com.example.caturday.ui.theme.CaturdayTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val userPreferencesRepository = UserPreferencesRepository(this)
         setContent {
             CaturdayTheme {
-                // A surface container using the 'background' color from the theme
+                val navController = rememberNavController()
+                val viewModel: GameViewModel = viewModel(
+                    factory = GameViewModelFactory(userPreferencesRepository)
+                )
+                val gameState by viewModel.uiState.collectAsState()
+
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Caturday")
+                    NavHost(navController = navController, startDestination = "main") {
+                        composable("main") {
+                            MainScreen(
+                                gameState = gameState,
+                                onPlaySoundClick = { viewModel.onPlaySoundClicked() },
+                                onSettingsClick = { navController.navigate("settings") }
+                            )
+                        }
+                        composable("settings") {
+                            SettingsScreen()
+                        }
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    CaturdayTheme {
-        Greeting("Android")
     }
 }
